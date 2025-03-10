@@ -3,9 +3,9 @@
 
 ##  AWS CloudFormation: Buenas Prácticas
 ### Estructura Recomendada
-- **Usar YAML** en lugar de JSON para mayor legibilidad.
-- **Dividir en módulos** reutilizables dentro de `templates/` y `modules/`.
-- **Usar parámetros y mappings** en lugar de valores fijos.
+- **Usar YAML** en lugar de JSON para mayor legibilidad. // recomendacion
+- **Dividir en módulos** reutilizables dentro de `templates/` y `modules/`./// 
+- **Usar parámetros y mappings** en lugar de valores fijos. // EJEMPLOS
 - **Utilizar AWS SAM** si se implementan funciones Lambda.
 
 ### Seguridad y Compliance

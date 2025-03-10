@@ -1,27 +1,4 @@
 # Guía Empresarial de Buenas Prácticas
-
-## 📁 Estructura Recomendada del Repositorio
-```plaintext
- empresa-infraestructura
-├── cloudformation
-│   ├── templates/
-│   ├── modules/
-│   ├── README.md
-│
-├── terraform
-│   ├── modules/
-│   ├── environments/
-│   ├── main.tf
-│   ├── README.md
-│
-├── docker
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── README.md
-│
-└── README.md  # Documento principal
-```
-
 ---
 
 ##  AWS CloudFormation: Buenas Prácticas

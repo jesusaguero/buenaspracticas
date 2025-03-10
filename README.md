@@ -77,6 +77,11 @@ resource "aws_s3_bucket" "example" {
 
 ##  Docker: Buenas Prácticas
 ### Optimización del Dockerfile
+- **Consideraciones de IMAGENES BASES**
+- ALPINE
+- DEBIAN
+- centOS
+- UBUNTU
 - **Usar imágenes base ligeras** (`alpine` en lugar de `ubuntu`).
 - **Evitar capas innecesarias** con menos `RUN`.
 - **Usar multi-stage builds** para reducir el tamaño final de la imagen.

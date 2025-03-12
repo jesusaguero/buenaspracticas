@@ -20,7 +20,7 @@ FECHA ACTUALIZACIÓN: 12/03/25 - v1.0.0
 
 - **Validación de Sintaxis y Buenas Prácticas**:
     - **Comprobación de Sintaxis**: Asegúrate de que no haya errores de sintaxis en la plantilla. Usa CFN Lint para verificar antes de cualquier despliegue.
-    - **Revisión de Buenas Prácticas**: CFN Lint puede ayudarte a identificar problemas comunes, como:
+    - **Revisión de Buenas Prácticas**: CFN Lint te ayuda a identificar problemas comunes, como:
       - Uso incorrecto de funciones intrínsecas.
       - Nombres de recursos no convencionales.
       - Uso indebido de parámetros y condiciones.
@@ -38,7 +38,7 @@ El comando `validate-template` en AWS CLI permite verificar si una plantilla es 
 #### Buenas Prácticas:
 - **Verificación de Plantillas Antes del Despliegue**:
     - Usa esta herramienta para asegurarte de que la plantilla no contiene errores antes de ejecutar el despliegue.
-    - Es una forma rápida de detectar errores de sintaxis en tus templates, pero no verifica las buenas prácticas.
+    - Es una forma rápida de detectar errores de sintaxis en tus templates, pero NO VERIFICA las buenas prácticas.
 
 #### Ejemplo de Uso:
 ```bash

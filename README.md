@@ -22,8 +22,6 @@ Resources:
       InstanceType: !Ref InstanceType
       ImageId: ami-123456
 ```
--) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
-
 ### **Cómo no debe ser:**
 Hardcodear valores específicos sin la posibilidad de personalizarlos.
 
@@ -35,7 +33,7 @@ Resources:
       InstanceType: t2.micro
       ImageId: ami-123456
 ```
-
+-) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
 ---
 
 ## **CFN-002: Uso de Funciones Intrínsecas para Referencias**
@@ -67,6 +65,7 @@ Resources:
       ImageId: "ami-123456"
       InstanceType: t2.micro
 ```
+-) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
 
 ---
 

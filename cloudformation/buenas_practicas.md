@@ -1,6 +1,6 @@
 # Buenas Prácticas en AWS CloudFormation
 
-
+## FECHA ACTUALIZACIÓN: 12/03/25 - v1.0.0
 ## **CFN-001: Uso de Parámetros en lugar de valores hardcodeados**
 
 ### **Cómo debe ser:**

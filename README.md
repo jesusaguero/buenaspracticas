@@ -22,6 +22,7 @@ Resources:
       InstanceType: !Ref InstanceType
       ImageId: ami-123456
 ```
+-) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference.html
 
 ### **Cómo no debe ser:**
 Hardcodear valores específicos sin la posibilidad de personalizarlos.

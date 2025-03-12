@@ -306,4 +306,130 @@ Resources:
 ```
 Referencia: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/template-description-structure.html
 
+## **CFN-010: Uso de Condition para Controlar la Creación de Recursos**
+
+### **Cómo debe ser:**
+Usar condiciones para decidir qué recursos se deben crear o modificar en función de parámetros de entrada.
+
+```yaml
+Parameters:
+  CreateInstance:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: true
+
+Conditions:
+  ShouldCreateInstance: !Equals [!Ref CreateInstance, 'true']
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Condition: ShouldCreateInstance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+```
+
+### **Cómo no debe ser:**
+No utilizar condiciones para controlar la creación de recursos, lo que puede resultar en la creación de recursos innecesarios.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+```
+
+**Referencia**:
+https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/conditions-section-structure.html
+
+---
+
+## **CFN-011: Uso de DeletionPolicy para Recursos Críticos**
+
+### **Cómo debe ser:**
+Usar DeletionPolicy para prevenir la eliminación accidental de recursos críticos cuando se destruye un stack.
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+```
+
+### **Cómo no debe ser:**
+No utilizar DeletionPolicy en recursos críticos, lo que puede causar pérdidas de datos o configuraciones importantes.
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+```
+
+**Referencia**:https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html
+
+---
+
+## **CFN-012: Uso de AWS::NoValue para Eliminar Propiedades de Recursos**
+
+### **Cómo debe ser:**
+Utilizar AWS::NoValue para eliminar propiedades opcionales de un recurso, evitando la inclusión de valores nulos o vacíos.
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration: !If [ShouldEnableVersioning, { Status: Enabled }, !Ref "AWS::NoValue"]
+```
+
+### **Cómo no debe ser:**
+Dejar propiedades vacías, lo que puede dar lugar a configuraciones incorrectas o inesperadas.
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration: 
+        Status: ""
+```
+
+**Referencia**: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-novalue.html
+
+---
+
+## **CFN-013: Uso de AWS::CloudFormation::Stack para Gestión Centralizada de Stacks**
+
+### **Cómo debe ser:**
+Utilizar stacks anidados para dividir la plantilla en módulos más pequeños, mejorando la mantenibilidad.
+
+```yaml
+Resources:
+  MyNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/my-bucket/my-template.yaml"
+      Parameters:
+        InstanceType: t2.micro
+```
+
+### **Cómo no debe ser:**
+Incluir toda la infraestructura en un solo stack sin modularización, lo que puede hacer que el stack sea difícil de gestionar y mantener.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+```
+
+**Referencia**: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html
+
 ---

@@ -34,6 +34,7 @@ Resources:
       ImageId: ami-123456
 ```
 -) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
+
 ---
 
 ## **CFN-002: Uso de Funciones Intrínsecas para Referencias**
@@ -87,6 +88,7 @@ No definir outputs, lo que dificulta la reutilización y la referencia entre sta
 ```yaml
 # No outputs definidos
 ```
+-) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html
 
 ---
 
@@ -124,6 +126,7 @@ Resources:
           #!/bin/bash
           aws s3 cp s3://my-bucket/myfile.txt /home/ec2-user/ --access-key MYACCESSKEY --secret-key MYSECRETKEY
 ```
+-) REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/quickref-general.html
 
 ---
 
@@ -179,6 +182,7 @@ Resources:
                 Action: "*"
                 Resource: "*"
 ```
+REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
 
 ---
 
@@ -213,6 +217,7 @@ Resources:
       InstanceType: t2.micro
       ImageId: ami-123456
 ```
+REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/mappings-section-structure.html
 
 ---
 
@@ -240,6 +245,7 @@ Resources:
       InstanceType: t2.micro
       ImageId: ami-123456
 ```
+REFERENCIA: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html
 
 ---
 
@@ -267,6 +273,7 @@ Parameters:
     Type: String
     Description: "Tipo de instancia EC2"
 ```
+Referencia: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
 
 ---
 
@@ -297,5 +304,6 @@ Resources:
       InstanceType: t2.micro
       ImageId: ami-123456
 ```
+Referencia: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/template-description-structure.html
 
 ---

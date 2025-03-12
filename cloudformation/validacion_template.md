@@ -13,6 +13,10 @@ FECHA ACTUALIZACIÓN: 12/03/25 - v1.0.0
       ```bash
       pip install cfn-lint
       ```
+    - Verifica la instalación:
+      ```bash
+      cfn-lint --version
+      ```
     - Ejecuta el siguiente comando para validar una plantilla:
       ```bash
       cfn-lint template.yaml
@@ -55,6 +59,10 @@ aws cloudformation validate-template --template-body file://template.yaml
     - Instala Checkov usando `pip`:
       ```bash
       pip install checkov
+      ```
+    - Verifica la instalación:
+      ```bash
+      checkov --version
       ```
     - Ejecuta el siguiente comando para analizar un archivo de plantilla CloudFormation:
       ```bash

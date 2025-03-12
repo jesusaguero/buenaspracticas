@@ -1,4 +1,4 @@
-# Buenas Prácticas para el Uso de Herramientas de Validación de Templates
+# Herramientas de Validación de Templates CLOUDFORMATION
 
 La validación de templates es una parte crítica del proceso de despliegue de infraestructura en la nube. Aquí te proporcionamos buenas prácticas sobre cómo utilizar herramientas de validación para asegurar que tus plantillas de **AWS CloudFormation** y **Terraform** sigan las mejores prácticas, evitando errores y problemas en el despliegue.
 

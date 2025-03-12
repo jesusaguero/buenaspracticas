@@ -431,8 +431,5 @@ Resources:
 ```
 
 **Referencia**: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html
-```
-
-
 
 ---

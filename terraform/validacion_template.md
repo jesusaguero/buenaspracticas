@@ -5,7 +5,6 @@ FECHA ACTUALIZACIÓN: 12/03/25 - v1.0.0
 ## **1. Terraform: Uso de Herramientas de Validación**
 
 ### **Terraform Validate**
-**terraform validate** 
 
 Alcance: es una herramienta incorporada que valida la sintaxis y la estructura de los archivos de configuración de Terraform. Aunque no garantiza que los recursos se provisionarán correctamente en AWS, es esencial para detectar errores de sintaxis.
 
@@ -22,7 +21,6 @@ terraform validate
 ---
 
 ### **Terraform Fmt**
-**terraform fmt** 
 
 Alcance: es una herramienta de formato automático que asegura que el código siga las convenciones estándar de estilo de Terraform, mejorando la legibilidad y consistencia del código.
 
@@ -39,7 +37,6 @@ terraform fmt
 ---
 
 ### **Checkov**
-**Checkov** 
 
 Alcance: es una herramienta de análisis estático de infraestructura como código (IaC) compatible con Terraform, CloudFormation, Kubernetes y otros lenguajes IaC. Verifica las plantillas de Terraform en busca de vulnerabilidades de seguridad, malas prácticas y configuraciones incorrectas.
 
@@ -66,7 +63,6 @@ checkov -f main.tf
 ---
 
 ### **TFLint**
-**TFLint** 
 
 Alcance: es una herramienta de análisis estático que valida las configuraciones de Terraform en busca de errores y malas prácticas, y también tiene soporte para algunas reglas de seguridad.
 

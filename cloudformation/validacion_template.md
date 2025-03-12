@@ -30,6 +30,8 @@ FECHA ACTUALIZACIÓN: 12/03/25 - v1.0.0
 cfn-lint my_template.yaml
 ```
 
+---
+
 ### **Template Validate (AWS CLI)**
 El comando `validate-template` en AWS CLI permite verificar si una plantilla es válida para su uso con CloudFormation.
 
@@ -42,4 +44,28 @@ El comando `validate-template` en AWS CLI permite verificar si una plantilla es 
 ```bash
 aws cloudformation validate-template --template-body file://template.yaml
 ```
+
 ---
+
+### **Checkov**
+**Checkov** es una herramienta de código abierto que permite realizar análisis estático de infraestructura como código (IaC). Es compatible con CloudFormation, Terraform, Kubernetes, y otros lenguajes IaC. Checkov verifica las plantillas de CloudFormation en busca de vulnerabilidades de seguridad, malas prácticas y configuraciones incorrectas.
+
+#### Buenas Prácticas:
+- **Instalación y Configuración**:
+    - Instala Checkov usando `pip`:
+      ```bash
+      pip install checkov
+      ```
+    - Ejecuta el siguiente comando para analizar un archivo de plantilla CloudFormation:
+      ```bash
+      checkov -f template.yaml
+      ```
+
+- **Validación de Seguridad y Buenas Prácticas**:
+    - **Análisis de Seguridad**: Checkov identifica riesgos de seguridad como permisos excesivos, configuraciones incorrectas de acceso a recursos y vulnerabilidades en la infraestructura.
+    - **Validación de Buenas Prácticas**: Checkov valida configuraciones recomendadas para asegurar la eficiencia operativa y el cumplimiento de las mejores prácticas en AWS.
+
+#### Ejemplo de Uso:
+```bash
+checkov -f template.yaml
+```

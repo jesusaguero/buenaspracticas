@@ -1,90 +1,112 @@
-# Guía Empresarial de Buenas Prácticas
----
+Buenas Prácticas en AWS CloudFormation
 
-##  AWS CloudFormation: Buenas Prácticas
-### Estructura Recomendada
-- **Usar YAML** en lugar de JSON para mayor legibilidad. // recomendacion
-- **Dividir en módulos** reutilizables dentro de `templates/` y `modules/`./// 
-- **Usar parámetros y mappings** en lugar de valores fijos. // EJEMPLOS
-- **Utilizar AWS SAM** si se implementan funciones Lambda.
+(CFN-001) Uso de Plantillas Declarativas
 
-### Seguridad y Compliance
-- Aplicar **Stack Policies** para evitar cambios accidentales.
-- Definir **IAM Roles con privilegios mínimos**.
-- Habilitar **AWS Config y CloudTrail** para auditoría.
+CloudFormation utiliza plantillas declarativas para definir la infraestructura como código. Se recomienda estructurar las plantillas de la siguiente manera:
 
-### Ejemplo de Estructura Base
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: "Plantilla base de CloudFormation"
+Template Version: 2010-09-09
 
-Resources:
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "my-bucket-${AWS::AccountId}"
-```
+Description: Breve descripción del template.
 
----
+Resources: Definir los recursos necesarios.
 
-##  Terraform: Buenas Prácticas
-### Organización del Código
-- **Separar ambientes** (`staging`, `production`) en `environments/`.
-- **Definir módulos** reutilizables dentro de `modules/`.
-- Usar **terraform.tfvars** para variables específicas por ambiente.
+Parameters: Usar parámetros para hacer la plantilla reutilizable.
 
-### Seguridad y Compliance
-- **Bloquear versiones de providers** para evitar errores inesperados.
-- Usar **State Backend en S3 con DynamoDB** para evitar corrupción del estado.
-- Habilitar **AWS IAM Roles** en lugar de claves de acceso.
+Outputs: Exportar valores clave para otros stacks.
 
-### Ejemplo de Estructura Base
-```hcl
-provider "aws" {
-  region = "us-east-2"
-}
+Mappings: Definir valores fijos según entorno.
 
-resource "aws_s3_bucket" "example" {
-  bucket = "my-terraform-bucket"
-  acl    = "private"
-}
-```
+Rules: Evaluar parámetros antes de crear el stack.
 
----
+Conditions: Usar condiciones para decidir si crear un recurso.
 
-##  Docker: Buenas Prácticas
-### Optimización del Dockerfile
-- **Consideraciones de IMAGENES BASES**
-- ALPINE (~5MB)
-- DEBIAN (~26MB)
-- centOS (~90MB)
-- UBUNTU (~200MB)
-- **Usar imágenes base ligeras** (`alpine` en lugar de `ubuntu`).
-- **Evitar capas innecesarias** con menos `RUN`.
-- **Usar multi-stage builds** para reducir el tamaño final de la imagen.
+Metadata: Incluir información adicional, configuraciones personalizadas.
 
-### Seguridad y Compliance
-- No ejecutar contenedores con **root user**.
-- Usar **.dockerignore** para excluir archivos sensibles.
-- Firmar imágenes y escanear vulnerabilidades antes del despliegue.
+(CFN-002) Uso de Stack, StackSet y Nested Stack
 
-### Ejemplo de Dockerfile Optimizado
-```dockerfile
-FROM node:18-alpine AS builder
-WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
+Stack: Implementación de una plantilla en una cuenta/región.
 
-FROM node:18-alpine
-WORKDIR /app
-COPY --from=builder /app .
-CMD ["node", "server.js"]
-```
+StackSet: Permite desplegar una plantilla en múltiples regiones y cuentas.
 
----
+Nested Stack: Divide grandes stacks en sub-stacks modulares.
 
-## Referencias
-- [Documentación Oficial de CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/)
-- [Terraform Best Practices](https://www.terraform-best-practices.com/)
-- [Dockerfile Best Practices](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
+(CFN-003) Validación de Plantillas
+
+Antes de desplegar una plantilla:
+
+Validate Template: Verifica sintaxis JSON/YAML.
+
+CFN Lint: Valida sintaxis y lógica de los recursos.
+
+(CFN-004) Uso de Pseudo-Parámetros
+
+CloudFormation proporciona pseudo-parámetros predefinidos como:
+
+AWS::AccountId
+
+AWS::Region
+
+AWS::StackId
+
+Se recomienda su uso para evitar valores hardcodeados.
+
+(CFN-005) Implementación de Macros en CloudFormation
+
+Las macros permiten modificar plantillas antes del despliegue.
+
+Se definen en la sección Transform.
+
+Pueden aplicarse a:
+
+Etiquetado automático de recursos.
+
+Prefijos en nombres de recursos.
+
+Cifrado forzado en buckets de S3 y bases de datos.
+
+Creación dinámica de múltiples recursos.
+
+Transformación YAML a JSON.
+
+(CFN-006) Uso de AWS CloudFormation Metadata
+
+La metadata permite almacenar información adicional y configurar instancias EC2 después de su creación.
+
+AWS::CloudFormation::Init: Configurar instancias EC2.
+
+AWS::CloudFormation::Interface: Personalizar experiencia en la consola.
+
+AWS::CloudFormation::Designer: Almacenar información visual de los recursos.
+
+(CFN-007) Estrategias de Despliegue
+
+Rolling Update: Actualización gradual sin afectar disponibilidad.
+
+Blue/Green Deployment: Dos entornos separados para minimizar riesgos.
+
+(CFN-008) Uso de AWS Config y CloudWatch
+
+AWS Config: Audita cambios en la configuración de recursos.
+
+CloudWatch: Monitoreo en tiempo real del rendimiento y logs.
+
+(CFN-009) Aplicación de Buenas Prácticas de Seguridad
+
+Habilitar cifrado en buckets de S3, volúmenes EBS y bases de datos RDS.
+
+Aplicar etiquetas estándar a todos los recursos.
+
+Definir políticas de seguridad automáticas.
+
+(CFN-010) Uso de AWS SAM para Aplicaciones Serverless
+
+AWS::Serverless-2016-10-31 simplifica la definición de funciones Lambda y API Gateway.
+
+Se recomienda usarlo para reducir el código necesario.
+
+(CFN-011) Uso de StackSets en Escenarios Empresariales
+
+Multi-Región: Empresas que requieren la misma infraestructura en varias regiones.
+
+Apps a Gran Escala: Despliegue de infraestructura estándar en cuentas de clientes.
+

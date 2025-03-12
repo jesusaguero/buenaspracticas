@@ -1,220 +1,301 @@
 # Buenas Prácticas en AWS CloudFormation
 
-## (CFN-001) Uso de Plantillas Declarativas
 
-CloudFormation utiliza plantillas declarativas para definir la infraestructura como código. Se recomienda estructurar las plantillas de la siguiente manera:
+## **CFN-001: Uso de Parámetros en lugar de valores hardcodeados**
 
-- **Template Version**: `2010-09-09`
-- **Description**: Breve descripción del template.
-- **Resources**: Definir los recursos necesarios.
-- **Parameters**: Usar parámetros para hacer la plantilla reutilizable.
-- **Outputs**: Exportar valores clave para otros stacks.
-- **Mappings**: Definir valores fijos según entorno.
-- **Rules**: Evaluar parámetros antes de crear el stack.
-- **Conditions**: Usar condiciones para decidir si crear un recurso.
-- **Metadata**: Incluir información adicional, configuraciones personalizadas.
+### **Cómo debe ser:**
+Usar parámetros para evitar valores hardcodeados que pueden cambiar entre entornos.
 
-**Ejemplo correcto:**
 ```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: "Ejemplo de plantilla bien estructurada"
 Parameters:
   InstanceType:
     Type: String
-    Default: t3.micro
-Resources:
-  EC2Instance:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: !Ref InstanceType
-      ImageId: ami-12345678
-```
-
-**Ejemplo incorrecto:** (Valores hardcodeados, sin descripción ni estructura clara)
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+    Description: "Tipo de instancia para la EC2"
 Resources:
   MyInstance:
     Type: AWS::EC2::Instance
     Properties:
-      InstanceType: "t3.micro"
-      ImageId: "ami-12345678"
+      InstanceType: !Ref InstanceType
+      ImageId: ami-123456
+```
+
+### **Cómo no debe ser:**
+Hardcodear valores específicos sin la posibilidad de personalizarlos.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
 ```
 
 ---
 
-## (CFN-002) Uso de Stack, StackSet y Nested Stack
+## **CFN-002: Uso de Funciones Intrínsecas para Referencias**
 
-- **Stack**: Implementación de una plantilla en una cuenta/región.
-- **StackSet**: Permite desplegar una plantilla en múltiples regiones y cuentas.
-- **Nested Stack**: Divide grandes stacks en sub-stacks modulares.
+### **Cómo debe ser:**
+Usar funciones intrínsecas como `!Ref`, `!GetAtt`, y `!Sub` para hacer referencias a recursos de manera eficiente.
 
-**Ejemplo correcto:** Uso de Nested Stacks para modularización
 ```yaml
-AWSTemplateFormatVersion: '2010-09-09'
 Resources:
-  NetworkStack:
+  MyBucket:
+    Type: AWS::S3::Bucket
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref MyBucket
+      InstanceType: t2.micro
+```
+
+### **Cómo no debe ser:**
+Referencias directas que no utilizan funciones intrínsecas.
+
+```yaml
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-123456"
+      InstanceType: t2.micro
+```
+
+---
+
+## **CFN-003: Uso de Outputs para Compartir Información de Stack**
+
+### **Cómo debe ser:**
+Definir outputs para compartir información útil sobre los recursos creados en un stack.
+
+```yaml
+Outputs:
+  InstanceId:
+    Description: "ID de la instancia EC2"
+    Value: !Ref MyInstance
+```
+
+### **Cómo no debe ser:**
+No definir outputs, lo que dificulta la reutilización y la referencia entre stacks.
+
+```yaml
+# No outputs definidos
+```
+
+---
+
+## **CFN-004: Evitar el uso de Claves de Acceso en `UserData`**
+
+### **Cómo debe ser:**
+No incluir claves de acceso directamente en el `UserData`. Usar roles de IAM para delegar permisos.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+      IamInstanceProfile: MyInstanceProfile
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          aws s3 cp s3://my-bucket/myfile.txt /home/ec2-user/
+```
+
+### **Cómo no debe ser:**
+Incluir claves de acceso directamente en el `UserData`, lo cual es un riesgo de seguridad.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          aws s3 cp s3://my-bucket/myfile.txt /home/ec2-user/ --access-key MYACCESSKEY --secret-key MYSECRETKEY
+```
+
+---
+
+## **CFN-005: Uso de Roles IAM con Principios de Menor Privilegio**
+
+### **Cómo debe ser:**
+Crear roles IAM con los permisos mínimos necesarios y asignarlos a los recursos.
+
+```yaml
+Resources:
+  MyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ec2.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "MyPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: "arn:aws:s3:::my-bucket/*"
+```
+
+### **Cómo no debe ser:**
+Asumir permisos excesivos en los roles.
+
+```yaml
+Resources:
+  MyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "ec2.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Policies:
+        - PolicyName: "MyPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action: "*"
+                Resource: "*"
+```
+
+---
+
+## **CFN-006: Uso de Mappings para Configuración Regional**
+
+### **Cómo debe ser:**
+Utilizar **Mappings** para manejar configuraciones específicas de la región.
+
+```yaml
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-123456
+    us-west-2:
+      AMI: ami-654321
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", AMI]
+```
+
+### **Cómo no debe ser:**
+No utilizar **Mappings** y definir configuraciones específicas dentro del recurso.
+
+```yaml
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-123456
+```
+
+---
+
+## **CFN-007: Uso de Stacks Anidados para Modularización**
+
+### **Cómo debe ser:**
+Utilizar **Stacks Anidados** para dividir plantillas grandes en módulos más manejables.
+
+```yaml
+Resources:
+  MyNestedStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/mybucket/network.yaml"
+      TemplateURL: "https://s3.amazonaws.com/my-bucket/my-template.yaml"
 ```
 
-**Ejemplo incorrecto:** Definir todo en un solo archivo (poco mantenible)
+### **Cómo no debe ser:**
+Colocar todos los recursos en una sola plantilla sin modularización.
+
 ```yaml
-AWSTemplateFormatVersion: '2010-09-09'
 Resources:
-  MyVPC:
-    Type: AWS::EC2::VPC
+  MyInstance:
+    Type: AWS::EC2::Instance
     Properties:
-      CidrBlock: "10.0.0.0/16"
-  MySubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref MyVPC
-      CidrBlock: "10.0.1.0/24"
+      InstanceType: t2.micro
+      ImageId: ami-123456
 ```
 
 ---
 
-## (CFN-003) Validación de Plantillas
+## **CFN-008: Validación de Parámetros con Constraints**
 
-Antes de desplegar una plantilla:
+### **Cómo debe ser:**
+Usar restricciones de parámetros para garantizar que los valores sean válidos.
 
-- `Validate Template`: Verifica sintaxis JSON/YAML.
-- `CFN Lint`: Valida sintaxis y lógica de los recursos.
-
-**Ejemplo correcto:** Uso de `cfn-lint`
-```sh
-cfn-lint template.yaml
+```yaml
+Parameters:
+  InstanceType:
+    Type: String
+    AllowedValues:
+      - t2.micro
+      - t2.small
+    Description: "Tipo de instancia EC2"
 ```
 
-**Ejemplo incorrecto:** Desplegar sin validación previa
-```sh
-aws cloudformation deploy --template-file template.yaml --stack-name MiStack
+### **Cómo no debe ser:**
+No validar parámetros y permitir valores incorrectos.
+
+```yaml
+Parameters:
+  InstanceType:
+    Type: String
+    Description: "Tipo de instancia EC2"
 ```
 
 ---
 
-## (CFN-004) Uso de Pseudo-Parámetros
+## **CFN-009: Descripción Detallada de Recursos**
 
-CloudFormation proporciona pseudo-parámetros predefinidos como:
+### **Cómo debe ser:**
+Incluir una descripción clara para cada recurso.
 
-- `AWS::AccountId`
-- `AWS::Region`
-- `AWS::StackId`
-
-**Ejemplo correcto:**
 ```yaml
 Resources:
-  MyBucket:
-    Type: AWS::S3::Bucket
+  MyInstance:
+    Type: AWS::EC2::Instance
     Properties:
-      BucketName: !Sub "mi-bucket-${AWS::AccountId}"
+      InstanceType: t2.micro
+      ImageId: ami-123456
+    Metadata:
+      Description: "Instancia EC2 utilizada para el entorno de desarrollo"
 ```
 
-**Ejemplo incorrecto:** Uso de valores hardcodeados
+### **Cómo no debe ser:**
+Omitir descripciones de recursos.
+
 ```yaml
 Resources:
-  MyBucket:
-    Type: AWS::S3::Bucket
+  MyInstance:
+    Type: AWS::EC2::Instance
     Properties:
-      BucketName: "mi-bucket-123456789012"
+      InstanceType: t2.micro
+      ImageId: ami-123456
 ```
 
 ---
-
-## (CFN-005) Implementación de Macros en CloudFormation
-
-Las macros permiten modificar plantillas antes del despliegue.
-
-**Ejemplo correcto:**
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: MyMacro
-Resources:
-  MyBucket:
-    Type: AWS::S3::Bucket
-```
-
-**Ejemplo incorrecto:** No usar macros cuando son necesarias
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Resources:
-  MyBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      Tags:
-        - Key: "Environment"
-          Value: "Production"
-```
-
----
-
-## (CFN-006) Uso de AWS CloudFormation Metadata
-
-**Ejemplo correcto:**
-```yaml
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: "Configuración de Red"
-        Parameters:
-          - VpcId
-```
-
-**Ejemplo incorrecto:** No usar metadata
-
----
-
-## (CFN-007) Estrategias de Despliegue
-
-- **Rolling Update**: Actualización gradual sin afectar disponibilidad.
-- **Blue/Green Deployment**: Dos entornos separados para minimizar riesgos.
-
-**Ejemplo correcto:** Rolling Update en Auto Scaling Group
-```yaml
-UpdatePolicy:
-  AutoScalingRollingUpdate:
-    MinInstancesInService: 1
-    MaxBatchSize: 2
-```
-
----
-
-## (CFN-008) Uso de AWS Config y CloudWatch
-
-- **AWS Config**: Audita cambios en la configuración de recursos.
-- **CloudWatch**: Monitoreo en tiempo real del rendimiento y logs.
-
-**Ejemplo correcto:**
-```yaml
-Resources:
-  MyAlarm:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      AlarmDescription: "Alerta cuando CPU excede 80%"
-      MetricName: CPUUtilization
-      Namespace: AWS/EC2
-      Threshold: 80
-```
-
----
-
-## (CFN-009) Aplicación de Buenas Prácticas de Seguridad
-
-- Habilitar cifrado en buckets de S3, volúmenes EBS y bases de datos RDS.
-- Aplicar etiquetas estándar a todos los recursos.
-- Definir políticas de seguridad automáticas.
-
-**Ejemplo correcto:**
-```yaml
-Resources:
-  MyBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-```

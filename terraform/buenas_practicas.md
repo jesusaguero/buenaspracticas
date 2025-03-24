@@ -158,16 +158,23 @@ terraform {
 
 ---
 
-#### TF-008: **Definir la versión de Terraform**  
-**Correcto:**  
+#### TF-008: **Definir la versión de Terraform**
+
+✅ **Correcto (en versions.tf):**
+📌 **Ubicación recomendada:** `versions.tf`
 ```hcl
 terraform {
   required_version = ">= 1.0"
 }
-```  
-**Incorrecto:**  
+```
+
+❌ **Incorrecto:**
 ```hcl
 terraform {
 }
-```  
-**Explicación**: Es importante definir la versión de Terraform para evitar problemas de compatibilidad entre entornos y garantizar la consistencia en los despliegues.  
+```
+
+💡 **Explicación:**  
+Es importante definir la versión de Terraform en el archivo `versions.tf` para evitar problemas de compatibilidad entre entornos y garantizar la consistencia en los despliegues.  
+Mantener esta configuración en un archivo separado ayuda a organizar mejor el código y facilitar actualizaciones de versión.
+```

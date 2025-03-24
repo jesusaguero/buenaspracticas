@@ -155,3 +155,19 @@ terraform {
 }
 ```  
 **Explicación**: Usar un backend remoto como S3 con DynamoDB evita conflictos de estado y mejora la integridad del archivo de estado.  
+
+---
+
+#### TF-008: **Definir la versión de Terraform**  
+**Correcto:**  
+```hcl
+terraform {
+  required_version = ">= 1.0"
+}
+```  
+**Incorrecto:**  
+```hcl
+terraform {
+}
+```  
+**Explicación**: Es importante definir la versión de Terraform para evitar problemas de compatibilidad entre entornos y garantizar la consistencia en los despliegues.  

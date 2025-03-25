@@ -177,4 +177,19 @@ terraform {
 💡 **Explicación:**  
 Es importante definir la versión de Terraform en el archivo `versions.tf` para evitar problemas de compatibilidad entre entornos y garantizar la consistencia en los despliegues.  
 Mantener esta configuración en un archivo separado ayuda a organizar mejor el código y facilitar actualizaciones de versión.
+
+
+#### TF-009: **Los módulos deben terminar con "-applying"**  
+**Correcto:**  
+```hcl
+module "network-applying" {
+  source = "./modules/network"
+}
 ```
+**Incorrecto:**  
+```hcl
+module "network" {
+  source = "./modules/network"
+}
+```
+**Explicación**: Usar un sufijo estándar como `-applying` en los módulos facilita la identificación y el mantenimiento del código.

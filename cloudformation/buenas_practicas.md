@@ -401,35 +401,3 @@ Resources:
 
 **Referencia**: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-novalue.html
 
----
-
-## **CFN-013: Uso de AWS::CloudFormation::Stack para Gestión Centralizada de Stacks**
-
-### **Cómo debe ser:**
-Utilizar stacks anidados para dividir la plantilla en módulos más pequeños, mejorando la mantenibilidad.
-
-```yaml
-Resources:
-  MyNestedStack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: "https://s3.amazonaws.com/my-bucket/my-template.yaml"
-      Parameters:
-        InstanceType: t2.micro
-```
-
-### **Cómo no debe ser:**
-Incluir toda la infraestructura en un solo stack sin modularización, lo que puede hacer que el stack sea difícil de gestionar y mantener.
-
-```yaml
-Resources:
-  MyInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      InstanceType: t2.micro
-      ImageId: ami-123456
-```
-
-**Referencia**: https://docs.aws.amazon.com/es_es/AWSCloudFormation/latest/UserGuide/using-cfn-nested-stacks.html
-
----
